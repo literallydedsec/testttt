@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indie Animation Summer Fest 2026 | The Gauntlet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700;900&display=swap');
+        
+        :root {
+            --team-blue: #3b82f6;
+            --team-red: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        .heading-font {
+            font-family: 'Bungee', cursive;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-blue { background-color: var(--team-blue); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+        .progress-red { background-color: var(--team-red); box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .nav-btn.active {
+            border-bottom: 3px solid #f59e0b;
+            color: #f59e0b;
+        }
+
+        .indie-badge {
+            background: linear-gradient(90deg, #f59e0b, #ea580c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #submissionModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.8);
+            z-index: 10;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <header class="pt-12 pb-8 text-center px-4">
+        <span class="heading-font text-lg tracking-[0.3em] indie-badge uppercase">Indie Animation</span>
+        <h1 class="heading-font text-5xl md:text-7xl text-white mb-2 tracking-tighter">SUMMER FEST</h1>
+        <p class="text-xl text-slate-400 font-bold uppercase tracking-widest italic">July 10th — July 19th</p>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 space-y-8">
+
+        <!-- Battle Meter Section -->
+        <section id="battle-section" class="glass rounded-3xl p-6 shadow-2xl overflow-hidden relative">
+            <div id="meter-loader" class="loading-overlay">
+                <i class="fa-solid fa-circle-notch fa-spin text-yellow-500 text-3xl"></i>
+            </div>
+
+            <div class="flex justify-between items-end mb-4">
+                <div class="text-blue-400">
+                    <span class="block text-xs font-black uppercase">Team Blue</span>
+                    <span class="text-3xl heading-font" id="blueScore">0</span>
+                </div>
+                <div class="text-center pb-2">
+                    <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-black uppercase">Battle Meter</span>
+                </div>
+                <div class="text-right text-red-400">
+                    <span class="block text-xs font-black uppercase">Team Red</span>
+                    <span class="text-3xl heading-font" id="redScore">0</span>
+                </div>
+            </div>
+            
+            <div class="h-8 bg-slate-800 rounded-full flex overflow-hidden p-1">
+                <div id="blueBar" class="progress-blue h-full rounded-l-full transition-all duration-1000" style="width: 50%"></div>
+                <div id="redBar" class="progress-red h-full rounded-r-full transition-all duration-1000" style="width: 50%"></div>
+            </div>
+            <p id="leader-text" class="text-center text-sm mt-4 text-slate-400 italic">
+                Awaiting first submissions...
+            </p>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex justify-center space-x-2 md:space-x-4 border-b border-slate-700">
+            <button onclick="openTab('today')" id="btn-today" class="nav-btn active px-3 md:px-4 py-2 font-bold uppercase text-[10px] md:text-sm tracking-widest">Today</button>
+            <button onclick="openTab('schedule')" id="btn-schedule" class="nav-btn px-3 md:px-4 py-2 font-bold uppercase text-[10px] md:text-sm tracking-widest">Schedule</button>
+            <button onclick="openTab('rules')" id="btn-rules" class="nav-btn px-3 md:px-4 py-2 font-bold uppercase text-[10px] md:text-sm tracking-widest">Rules</button>
+            <button onclick="openTab('awards')" id="btn-awards" class="nav-btn px-3 md:px-4 py-2 font-bold uppercase text-[10px] md:text-sm tracking-widest">Awards</button>
+        </nav>
+
+        <div id="today" class="tab-content active space-y-6">
+            <div class="glass rounded-2xl p-8 border-l-4 border-yellow-500">
+                <div class="flex items-center mb-4">
+                    <div class="bg-yellow-500 text-black w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fa-solid fa-clapperboard text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl heading-font">Day Two Challenges</h2>
+                        <p class="text-slate-400 italic">"Animation in Motion"</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mt-8">
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-blue-400 font-black uppercase text-sm mb-2">Daily Quest</h3>
+                        <p class="text-lg font-bold">"The Relay"</p>
+                        <p class="text-slate-400 mt-2 text-sm italic">Post a WIP clip and tag 3 teammates.</p>
+                        <div class="mt-4 flex items-center text-xs text-yellow-500 font-bold">
+                            <i class="fa-solid fa-bolt mr-1"></i> Reward: +25 Points
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-purple-400 font-black uppercase text-sm mb-2">Drawing Theme</h3>
+                        <p class="text-lg font-bold">"Neon Summer"</p>
+                        <p class="text-slate-400 mt-2 text-sm italic">High-contrast neon palette background.</p>
+                        <div class="mt-4 flex items-center text-xs text-yellow-500 font-bold">
+                            <i class="fa-solid fa-bolt mr-1"></i> Reward: +50 Points
+                        </div>
+                    </div>
+                </div>
+
+                <button id="submitBtn" onclick="toggleModal(true)" class="w-full mt-8 bg-white text-black font-black py-4 rounded-xl hover:bg-yellow-500 transition-all transform hover:scale-[1.02] uppercase tracking-widest shadow-xl">
+                    Submit Entry & Claim Points <i class="fa-solid fa-plus-circle ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="submissionModal">
+            <div class="glass w-full max-w-lg mx-4 rounded-3xl p-8 border-t-4 border-yellow-500 shadow-2xl relative">
+                <div id="form-loader" class="loading-overlay">
+                    <i class="fa-solid fa-circle-notch fa-spin text-yellow-500 text-3xl"></i>
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="heading-font text-2xl">Submit Work</h2>
+                    <button onclick="toggleModal(false)" class="text-slate-400 hover:text-white"><i class="fa-solid fa-times text-xl"></i></button>
+                </div>
+                
+                <form id="pointForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-black uppercase text-slate-400 mb-2">1. Select Your Team</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button type="button" onclick="selectTeam('blue')" id="selectBlue" class="py-3 rounded-xl border-2 border-blue-500/30 bg-blue-500/10 text-blue-400 font-bold hover:bg-blue-500/20 transition-all">Team Blue</button>
+                            <button type="button" onclick="selectTeam('red')" id="selectRed" class="py-3 rounded-xl border-2 border-red-500/30 bg-red-500/10 text-red-400 font-bold hover:bg-red-500/20 transition-all">Team Red</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black uppercase text-slate-400 mb-2">2. What did you complete?</label>
+                        <select id="taskSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-yellow-500">
+                            <option value="25">Daily Quest (+25 Pts)</option>
+                            <option value="50">Drawing Theme (+50 Pts)</option>
+                            <option value="100">Animation Jam Progress (+100 Pts)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black uppercase text-slate-400 mb-2">3. Proof Link</label>
+                        <input type="url" id="proofLink" placeholder="https://..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:outline-none focus:border-yellow-500" required>
+                    </div>
+
+                    <button type="submit" class="w-full bg-yellow-500 text-black font-black py-4 rounded-xl mt-4 hover:brightness-110 transition-all uppercase">
+                        Confirm Submission
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="schedule" class="tab-content space-y-4">
+             <div class="glass rounded-2xl p-6">
+                <h2 class="heading-font text-2xl mb-6">Road to Finale</h2>
+                <p class="text-slate-400 mb-4">Check back daily for new updates.</p>
+            </div>
+        </div>
+
+        <div id="rules" class="tab-content space-y-6">
+            <div class="glass rounded-2xl p-8">
+                <h2 class="heading-font text-2xl mb-6">Rules</h2>
+                <p class="text-slate-400">Be fair, be kind, and tag your work correctly.</p>
+            </div>
+        </div>
+
+        <div id="awards" class="tab-content space-y-6">
+            <div class="glass rounded-2xl p-8 text-center">
+                <h2 class="heading-font text-2xl mb-2">Awards Locked</h2>
+                <p class="text-slate-400 italic">Revealing July 19th</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 glass border-t border-white/10 p-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center text-xs">
+            <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span class="text-slate-400 uppercase font-bold">Cloud Sync Active</span>
+            </div>
+            <div id="userStatus" class="text-slate-500 italic">Connecting...</div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+        // Firebase Config
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'indie-anim-summer-fest';
+
+        let user = null;
+        let selectedTeam = null;
+
+        // AUTH INITIALIZATION
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth error", error);
+            }
+        };
+
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            if (user) {
+                document.getElementById('userStatus').innerText = "Logged in as Participant";
+                setupScoreListener();
+            }
+        });
+
+        initAuth();
+
+        // GLOBAL UI HELPERS
+        window.openTab = (tabName) => {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            document.getElementById('btn-' + tabName).classList.add('active');
+        };
+
+        window.toggleModal = (show) => {
+            document.getElementById('submissionModal').style.display = show ? 'flex' : 'none';
+        };
+
+        window.selectTeam = (team) => {
+            selectedTeam = team;
+            const blueBtn = document.getElementById('selectBlue');
+            const redBtn = document.getElementById('selectRed');
+            if (team === 'blue') {
+                blueBtn.classList.replace('border-blue-500/30', 'border-blue-500');
+                blueBtn.classList.add('bg-blue-500/40');
+                redBtn.classList.replace('border-red-500', 'border-red-500/30');
+                redBtn.classList.remove('bg-red-500/40');
+            } else {
+                redBtn.classList.replace('border-red-500/30', 'border-red-500');
+                redBtn.classList.add('bg-red-500/40');
+                blueBtn.classList.replace('border-blue-500', 'border-blue-500/30');
+                blueBtn.classList.remove('bg-blue-500/40');
+            }
+        };
+
+        // DATA: FETCHING SCORES
+        const setupScoreListener = () => {
+            const scoreRef = collection(db, 'artifacts', appId, 'public', 'data', 'submissions');
+            document.getElementById('meter-loader').style.display = 'flex';
+
+            onSnapshot(scoreRef, (snapshot) => {
+                let blueTotal = 0;
+                let redTotal = 0;
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.team === 'blue') blueTotal += data.points;
+                    if (data.team === 'red') redTotal += data.points;
+                });
+
+                updateMeterUI(blueTotal, redTotal);
+                document.getElementById('meter-loader').style.display = 'none';
+            }, (error) => {
+                console.error("Listener error", error);
+                document.getElementById('meter-loader').style.display = 'none';
+            });
+        };
+
+        const updateMeterUI = (blue, red) => {
+            document.getElementById('blueScore').innerText = blue.toLocaleString();
+            document.getElementById('redScore').innerText = red.toLocaleString();
+
+            const total = blue + red || 1; // Avoid divide by zero
+            const bluePercent = (blue / total) * 100;
+            const redPercent = (red / total) * 100;
+
+            document.getElementById('blueBar').style.width = bluePercent + '%';
+            document.getElementById('redBar').style.width = redPercent + '%';
+
+            const leaderText = document.getElementById('leader-text');
+            if (blue > red) {
+                leaderText.innerHTML = `<i class="fa-solid fa-crown text-blue-400"></i> Team Blue is leading by <span class="text-white font-bold">${(blue-red).toLocaleString()}</span>`;
+            } else if (red > blue) {
+                leaderText.innerHTML = `<i class="fa-solid fa-crown text-red-400"></i> Team Red is leading by <span class="text-white font-bold">${(red-blue).toLocaleString()}</span>`;
+            } else {
+                leaderText.innerText = "The battle is tied!";
+            }
+        };
+
+        // DATA: SUBMITTING SCORES
+        document.getElementById('pointForm').onsubmit = async (e) => {
+            e.preventDefault();
+            if (!user) return alert("You must be logged in!");
+            if (!selectedTeam) return alert("Select a team!");
+
+            const points = parseInt(document.getElementById('taskSelect').value);
+            const link = document.getElementById('proofLink').value;
+
+            document.getElementById('form-loader').style.display = 'flex';
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'submissions'), {
+                    userId: user.uid,
+                    team: selectedTeam,
+                    points: points,
+                    link: link,
+                    timestamp: serverTimestamp()
+                });
+
+                toggleModal(false);
+                document.getElementById('pointForm').reset();
+                selectedTeam = null;
+                document.querySelectorAll('#pointForm button').forEach(b => b.classList.remove('bg-blue-500/40', 'bg-red-500/40', 'border-blue-500', 'border-red-500'));
+                alert("Points submitted! The meter will update in a moment.");
+            } catch (err) {
+                console.error(err);
+                alert("Error saving points. Try again.");
+            } finally {
+                document.getElementById('form-loader').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
